@@ -68,3 +68,10 @@ export function formatDateTime(value?: string | null) {
     minute: "2-digit",
   });
 }
+
+export function statusProgress(status: ShipmentStatus) {
+  if (status === "exception") return 100;
+  const idx = STATUS_ORDER.indexOf(status);
+  if (idx < 0) return 0;
+  return Math.round(((idx + 1) / STATUS_ORDER.length) * 100);
+}
