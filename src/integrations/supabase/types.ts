@@ -125,6 +125,8 @@ export type Database = {
         Row: {
           cargo_type: string | null
           created_at: string
+          current_location: string | null
+          description: string | null
           destination: string
           estimated_delivery: string | null
           id: string
@@ -143,6 +145,8 @@ export type Database = {
         Insert: {
           cargo_type?: string | null
           created_at?: string
+          current_location?: string | null
+          description?: string | null
           destination: string
           estimated_delivery?: string | null
           id?: string
@@ -161,6 +165,8 @@ export type Database = {
         Update: {
           cargo_type?: string | null
           created_at?: string
+          current_location?: string | null
+          description?: string | null
           destination?: string
           estimated_delivery?: string | null
           id?: string
