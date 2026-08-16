@@ -16,6 +16,31 @@ import {
 
 const searchSchema = z.object({ code: z.string().optional() });
 
+type TrackEvent = {
+  id: string;
+  status: ShipmentStatus;
+  location: string | null;
+  note: string | null;
+  occurred_at: string;
+};
+
+type TrackResult = {
+  shipment: {
+    id: string;
+    tracking_number: string;
+    origin: string;
+    destination: string;
+    service_level: string;
+    cargo_type: string | null;
+    weight_kg: number | null;
+    pieces: number;
+    recipient_name: string | null;
+    status: ShipmentStatus;
+    estimated_delivery: string | null;
+  };
+  events: TrackEvent[];
+};
+
 export const Route = createFileRoute("/track")({
   validateSearch: searchSchema,
   head: () => ({
@@ -40,20 +65,12 @@ function Track() {
   const query = useQuery({
     queryKey: ["track", code],
     enabled: Boolean(code),
-    queryFn: async () => {
-      const { data: shipment, error } = await supabase
-        .from("shipments")
-        .select("*")
-        .eq("tracking_number", code!)
-        .maybeSingle();
+    queryFn: async (): Promise<TrackResult | null> => {
+      const { data, error } = await supabase.rpc("track_shipment", {
+        _tracking_number: code!,
+      });
       if (error) throw error;
-      if (!shipment) return null;
-      const { data: events } = await supabase
-        .from("shipment_events")
-        .select("*")
-        .eq("shipment_id", shipment.id)
-        .order("occurred_at", { ascending: false });
-      return { shipment, events: events ?? [] };
+      return (data as TrackResult | null) ?? null;
     },
   });
 
