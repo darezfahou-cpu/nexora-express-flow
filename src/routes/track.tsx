@@ -16,6 +16,31 @@ import {
 
 const searchSchema = z.object({ code: z.string().optional() });
 
+type TrackEvent = {
+  id: string;
+  status: ShipmentStatus;
+  location: string | null;
+  note: string | null;
+  occurred_at: string;
+};
+
+type TrackResult = {
+  shipment: {
+    id: string;
+    tracking_number: string;
+    origin: string;
+    destination: string;
+    service_level: string;
+    cargo_type: string | null;
+    weight_kg: number | null;
+    pieces: number;
+    recipient_name: string | null;
+    status: ShipmentStatus;
+    estimated_delivery: string | null;
+  };
+  events: TrackEvent[];
+};
+
 export const Route = createFileRoute("/track")({
   validateSearch: searchSchema,
   head: () => ({
